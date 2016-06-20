@@ -10,7 +10,6 @@ from PyQt5.QtPrintSupport import QPrintPreviewDialog
 from PyQt5.QtPrintSupport import QPrinter
 
 
-
 CONFIG_FILE_PATH = "notepad.ini"
 # панель задач
 ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("notepad")
