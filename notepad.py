@@ -11,7 +11,7 @@ from PyQt5.QtPrintSupport import QPrinter
 
 
 CONFIG_FILE_PATH = "notepad.ini"
-# панель задач
+
 ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("notepad")
 QtCore.QTextCodec.setCodecForLocale(QtCore.QTextCodec.codecForName("utf-8"))
 
@@ -20,11 +20,11 @@ class Notepad(QtWidgets.QMainWindow):
 
     def __init__(self):
         self.judgeConfig()
-        # имя файла
+      
         self.cur_file = ''
-        # папка по умолчанию
+        
         self.default_dir = ''
-        # настройка шрифта
+       
         self.clipboard = QtWidgets.QApplication.clipboard()
         self.last_search = ''
         
@@ -96,7 +96,7 @@ class Notepad(QtWidgets.QMainWindow):
             f.close()
 
     def readSettings(self):
-        # регулировка размера окна
+        
         width = self.getConfig('Display', 'width', 800)
         height = self.getConfig('Display', 'height ', 600)
         px = self.getConfig('Display', 'x', 0)
