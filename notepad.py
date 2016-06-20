@@ -9,9 +9,7 @@ from PyQt5 import QtWidgets
 from PyQt5.QtPrintSupport import QPrintPreviewDialog
 from PyQt5.QtPrintSupport import QPrinter
 
-"""仿照Windows系统自带记事本(Nodepad)
-   @http://my.oschina.net/upy
-"""
+
 
 CONFIG_FILE_PATH = "notepad.ini"
 # панель задач
