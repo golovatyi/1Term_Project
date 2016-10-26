@@ -20,14 +20,10 @@ class Notepad(QtWidgets.QMainWindow):
 
     def __init__(self):
         self.judgeConfig()
-      
         self.cur_file = ''
-        
         self.default_dir = ''
-       
         self.clipboard = QtWidgets.QApplication.clipboard()
         self.last_search = ''
-        
         self.font_family = 'Consolas'
         self.font_size = '16'
         self.font_bold = 'False'
@@ -43,13 +39,11 @@ class Notepad(QtWidgets.QMainWindow):
         self.setWindowTitle('Без названия - Блокнот')
         self.setWindowIcon(QtGui.QIcon('resource/notepad.png'))
         self.statusBar().showMessage('Ready')
-        
         self.createEditText()
         self.createActions()
         self.createMenubar()
         self.createToolbar()
         self.readSettings()
-
         self.cutAction.setEnabled(False)
         self.copyAction.setEnabled(False)
         self.undoAction.setEnabled(False)
@@ -61,7 +55,7 @@ class Notepad(QtWidgets.QMainWindow):
         self.text.textChanged.connect(self.findEnable)
 
     def findEnable(self):
-        
+
         if self.text.toPlainText():
             self.findAction.setEnabled(True)
         else:
@@ -70,7 +64,6 @@ class Notepad(QtWidgets.QMainWindow):
 
     def createEditText(self):
         self.text = QtWidgets.QPlainTextEdit()
-        
         self.text.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.text.customContextMenuRequested.connect(self.showContextMenu)
         self.setCentralWidget(self.text)
@@ -85,18 +78,17 @@ class Notepad(QtWidgets.QMainWindow):
         menu.addAction(self.pasteAction)
         menu.addSeparator()
         menu.addAction(self.selectAllAction)
-
-        
         menu.exec_(QtGui.QCursor.pos())
 
+
     def judgeConfig(self):
-        
+
         if not os.path.exists(CONFIG_FILE_PATH):
             f = open(CONFIG_FILE_PATH, 'w', encoding='utf-8')
             f.close()
 
     def readSettings(self):
-        
+        # регулировка размера окна
         width = self.getConfig('Display', 'width', 800)
         height = self.getConfig('Display', 'height ', 600)
         px = self.getConfig('Display', 'x', 0)
@@ -120,7 +112,7 @@ class Notepad(QtWidgets.QMainWindow):
         self.text.setFont(font)
 
     def writeSetting(self):
-       
+
         self.writeConfig('Display', 'width', str(self.size().width()))
         self.writeConfig('Display', 'height', str(self.size().height()))
         self.writeConfig('Display', 'x', str(self.pos().x()))
@@ -137,7 +129,7 @@ class Notepad(QtWidgets.QMainWindow):
         self.writeConfig('Font', 'underline', int(
             self.text.font().underline()))
 
-        
+
         self.config.write(open(CONFIG_FILE_PATH, 'w', encoding='utf-8'))
 
     def createMenubar(self):
@@ -160,7 +152,7 @@ class Notepad(QtWidgets.QMainWindow):
         editMenu.addAction(self.pasteAction)
         editMenu.addSeparator()
 
-        
+
         self.findAction.setEnabled(False)
         self.findNextAction.setEnabled(False)
 
@@ -180,7 +172,7 @@ class Notepad(QtWidgets.QMainWindow):
         self.menuBar().addMenu(helpMenu)
 
     def createToolbar(self):
-        toolbar = self.addToolBar('ФАЙЛ')
+        toolbar = self.addToolBar('показать меню')
         toolbar.addAction(self.newAction)
         toolbar.addAction(self.openAction)
         toolbar.addAction(self.saveAction)
@@ -229,9 +221,11 @@ class Notepad(QtWidgets.QMainWindow):
         self.printReviewAction = QtWidgets.QAction(QtGui.QIcon(
             'resource/print.png'), 'ПРЕДВАРИТЕЛЬНЫЙ ПРОСМОТР', self, statusTip='ПРЕДВАРИТЕЛЬНЫЙ ПРОСМОТР', triggered=self.printReview)
 
+
+
     def closeEvent(self, event):
         if self.maybeSave():
-            
+
             self.writeSetting()
             event.accept()
         else:
@@ -265,14 +259,14 @@ class Notepad(QtWidgets.QMainWindow):
     def saveAsFile(self):
         filename, _ = QtWidgets.QFileDialog.getSaveFileName(
             self, '', self.default_dir + 'Без названия', 'текст (*.txt);;Все файлы(*.*)')
-        
+
         if not filename:
             return False
         self.setCurrentFile(filename)
         return self.saveFile()
 
     def getConfig(self, section, key, default):
-        
+
         try:
             return self.config[section][key]
         except:
@@ -300,14 +294,13 @@ class Notepad(QtWidgets.QMainWindow):
         cursor = self.text.textCursor()
         start = cursor.anchor()
         text = self.search_text.text()
-        
         self.last_search = text
-        
+
         if self.last_search:
             self.findNextAction.setEnabled(True)
         text_len = len(text)
         context = self.text.toPlainText()
-        
+
         index = context.find(text, start)
         if -1 == index:
             QtWidgets.QMessageBox.information(
@@ -318,14 +311,16 @@ class Notepad(QtWidgets.QMainWindow):
             cursor.clearSelection()
             cursor.movePosition(QtGui.QTextCursor.Start,
                                 QtGui.QTextCursor.MoveAnchor)
-            
+
             cursor.movePosition(QtGui.QTextCursor.Right,
                                 QtGui.QTextCursor.MoveAnchor, start + text_len)
-            
+
             cursor.movePosition(QtGui.QTextCursor.Left,
                                 QtGui.QTextCursor.KeepAnchor, text_len)
             cursor.selectedText()
             self.text.setTextCursor(cursor)
+
+
 
     def replaceText(self):
         cursor = self.text.textCursor()
@@ -335,14 +330,14 @@ class Notepad(QtWidgets.QMainWindow):
         context = self.text.toPlainText()
         index = context.find(text, start)
         sender = self.sender()
-        
+
         if sender is self.replace_button:
             if text == cursor.selectedText():
                 position = cursor.anchor()
                 cursor.removeSelectedText()
                 replace_text = self.replace_text.text()
                 cursor.insertText(replace_text)
-                
+
                 self.replaceText()
                 return
         if -1 == index:
@@ -368,15 +363,16 @@ class Notepad(QtWidgets.QMainWindow):
         new_context = context.replace(search_word, replace_word)
         doc = self.text.document()
         curs = QtGui.QTextCursor(doc)
-        
+
         curs.select(QtGui.QTextCursor.Document)
-        
+
         curs.insertText(new_context)
 
     def printDocument(self):
+
         document = self.text.document()
         printer = QPrinter()
-        dlg = QPrintDialog(printer, self)
+        dlg = QPrintPreviewDialog(printer, self)
         if dlg.exec_() != QtWidgets.QDialog.Accepted:
             return
         document.print_(printer)
@@ -399,7 +395,7 @@ class Notepad(QtWidgets.QMainWindow):
         self.search_text = QtWidgets.QLineEdit()
         search_label.setBuddy(self.search_text)
         replace_label = QtWidgets.QLabel('Заменить на：')
-        
+
         self.replace_text = QtWidgets.QLineEdit()
         replace_label.setBuddy(self.replace_text)
         self.find_button = QtWidgets.QPushButton('Найти далее')
@@ -434,7 +430,7 @@ class Notepad(QtWidgets.QMainWindow):
             self.replace_all_button.setEnabled(True)
 
     def maybeSave(self):
-        
+
         if self.text.document().isModified():
             alert = QtWidgets.QMessageBox(self)
             alert.setWindowTitle('Блокнот')
@@ -458,7 +454,7 @@ class Notepad(QtWidgets.QMainWindow):
 
     def about(self):
         QtWidgets.QMessageBox.about(
-            self, 'О программе', r'<h2>КП по ОП</h2><p> <b>Выполнил студент группы P3175</b> <br> <b>Головатый А.Д.</b> <br>При использовании Python 3.x и PyQt5.x <br>golovatyi97@yandex.ru</p>')
+            self, 'О программе', r'<h2>КП по ОП</h2><p> <b>Выполнил студент</b> <br> <b>Группы P3175</b> <br>Головатый А.Д. <br>при использовании PYQT5 и Python3.4</p>')
 
     def setLineWrap(self):
         if not self.text.lineWrapMode():
@@ -469,7 +465,7 @@ class Notepad(QtWidgets.QMainWindow):
             self.lineWrapAction.setIcon(QtGui.QIcon(''))
 
     def setFont(self):
-        
+
         font, ok = QtWidgets.QFontDialog.getFont(self.text.font(), self, 'Выбор шрифта')
         if ok:
             self.text.setFont(QtGui.QFont(font))
@@ -485,24 +481,23 @@ class Notepad(QtWidgets.QMainWindow):
         self.text.document().setModified(False)
 
     def writeConfig(self, section, key, value):
-        
+
         if not self.config.has_section(section):
             self.config.add_section(section)
-        
+
         self.config.set(section, key, str(value))
 
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
-    translator = QtCore.QTranslator()
+
     if len(sys.argv) > 1:
         locale = sys.argv[1]
     else:
         locale = QtCore.QLocale.system().name()
 
-    translator.load('resource/qt_%s.qm' % locale)
-    
-    app.installTranslator(translator)
     notepad = Notepad()
     notepad.show()
     app.exec_()
+
+  
